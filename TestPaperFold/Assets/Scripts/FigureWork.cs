@@ -14,30 +14,28 @@ public class Figure
 }
 [RequireComponent(typeof(PaperFoldScript))]
 public class FigureWork : MonoBehaviour
-{    
-    public Figure[] figures;
+{
+    [SerializeField]
+    private Figure[] figures;
 
     private List<int> _ochered = new List<int>();
 
-    public TextureSettings _textureSettings;
-    public ColorSettings _colorSettings;
-    public WinClass winCheck;
+    [SerializeField]
+    private TextureSettings _textureSettings;
+    [SerializeField]
+    private ColorSettings _colorSettings;
+    [SerializeField]
+    private WinClass winCheck;
+    [SerializeField]
+    private MoveFigure _moveFigure;
 
-    public MoveFigure _moveFigure;
-
-    public Transform storage;
+    [SerializeField]
+    private Transform storage;
 
     private bool isWork = false;
     private void Start()
     {
         ResetFiguresColor();
-    }
-    private void ResetFiguresColor()
-    {
-        for (int i = 0; i < figures.Length; i++)
-        {
-            ChangeColorAndTexture(false, i);
-        }
     }
     public void ClickFigure(int index_figure)
     {
@@ -51,15 +49,19 @@ public class FigureWork : MonoBehaviour
         {
             StartAnimAtOpen(figures[index_figure].FigureObj, index_figure);
         }
-        StartCoroutine(FigureAnim(index_figure));
+        StartCoroutine(FigureAnimation(index_figure));
     }
     private void StartAnimAtOpen(Transform current_figure, int index_figure)
     {
-        Ochered(true, index_figure);
-        ParentFigure(current_figure, storage, _ochered.Count - 1);
-        ParentNeighbor(true, current_figure.GetSiblingIndex(), index_figure);
+        AddToOchered(index_figure);
+        FigureToParent(current_figure, storage, _ochered.Count - 1);
+        FiguresNeighborToParent(true, current_figure.GetSiblingIndex(), index_figure);
     }
-    private IEnumerator FigureAnim(int index_figure)
+    private void AddToOchered(int index_figure)
+    {
+        _ochered.Add(index_figure);
+    }
+    private IEnumerator FigureAnimation(int index_figure)
     {
         bool open = figures[index_figure].open;
 
@@ -73,7 +75,7 @@ public class FigureWork : MonoBehaviour
             int new_index_figure = !open ? index_figure : _ochered[i];
             Transform current_figure = figures[new_index_figure].FigureObj;
 
-            while (!_moveFigure.Moving(current_figure, target))
+            while (!_moveFigure.FigureIsMoved(current_figure, target))
             {
                 if (!open && current_figure.localScale.y < 0)
                 {
@@ -89,37 +91,43 @@ public class FigureWork : MonoBehaviour
             figures[new_index_figure].open = !open;
         }
         isWork = false;
-
         winCheck.CheckWin(_ochered);
     }
     private void EndAnimAtClose(Transform current_figure, int index_figure)
     {
-        ParentNeighbor(false, current_figure.GetSiblingIndex(), index_figure);
+        FiguresNeighborToParent(false, current_figure.GetSiblingIndex(), index_figure);
         ChangeColorAndTexture(false, index_figure);
-        ParentFigure(current_figure, storage.parent, 2);
-        Ochered(false, index_figure);
+        FigureToParent(current_figure, storage.parent, 2);
+        RemoveToOchered(index_figure);
     }
-    private void ParentNeighbor(bool open, int sibling_index, int index_figure)
+    private void RemoveToOchered(int index_figure)
     {
-        if (open)
+        _ochered.Remove(index_figure);
+    }
+    private void FigureToParent(Transform current_figure, Transform parent, int sibling)
+    {
+        current_figure.SetParent(parent);
+        current_figure.SetSiblingIndex(sibling);
+    }
+    private void FiguresNeighborToParent(bool open, int sibling_index, int index_figure)
+    {
+        foreach (Transform neighbor in figures[index_figure].Neighbors)
         {
-            foreach (Transform neighbor in figures[index_figure].Neighbors)
+            if (open)
             {
-                neighbor.SetParent(figures[index_figure].backgroundStorage);
+                FiguresNeighborToParentAtOpen(neighbor, index_figure);
             }
-        }
-        else
-        {
-            if (storage.childCount > 1)
+            else
             {
-                foreach (Transform neighbor in figures[index_figure].Neighbors)
-                {
-                    ParentNeighborAtClose(neighbor, sibling_index);
-                }
+                FiguresNeighborToParentAtClose(neighbor, sibling_index);
             }
         }
     }
-    private void ParentNeighborAtClose(Transform neighbor, int sibling_index)
+    private void FiguresNeighborToParentAtOpen(Transform neighbor, int index_figure)
+    {
+        neighbor.SetParent(figures[index_figure].backgroundStorage);
+    }
+    private void FiguresNeighborToParentAtClose(Transform neighbor, int sibling_index)
     {
         for (int j = 1; j < storage.childCount; j++)
         {
@@ -136,35 +144,25 @@ public class FigureWork : MonoBehaviour
                 }
             }
         }
-    }
-    private void ParentFigure(Transform current_figure, Transform parent, int sibling)
-    {
-        current_figure.SetParent(parent);
-        current_figure.SetSiblingIndex(sibling);
-    }    
-    private void Ochered(bool open, int index_figure)
-    {
-        if (open)
-        {
-            _ochered.Add(index_figure);
-        }
-        else
-        {
-            _ochered.Remove(index_figure);
-        }
-    }
+    }   
     private void ChangeColorAndTexture(bool open, int index_figure)
     {
         _colorSettings.ChangeColor(open, figures[index_figure].FigureObj);
         _textureSettings.ChangeTexture(open, figures[index_figure].FigureImage);
+    }
+    private void ResetFiguresColor()
+    {
+        for (int i = 0; i < figures.Length; i++)
+        {
+            ChangeColorAndTexture(false, i);
+        }
     }
 }
 [System.Serializable]
 public class MoveFigure
 {
     public float speed;
-
-    public bool Moving(Transform current_figure, float target)
+    public bool FigureIsMoved(Transform current_figure, float target)
     {
         float y_change = current_figure.localScale.y;
         y_change = Mathf.MoveTowards(y_change, target, speed * Time.deltaTime);
@@ -181,7 +179,6 @@ public class WinClass
 {
     public GameObject WinObject;
     private int[] WinArray = new int[4] { 0, 2, 1, 3 };
-
     public void CheckWin(List<int> ochered)
     {
         if (ochered.Count == 4)
@@ -214,7 +211,6 @@ public class WinClass
 public class TextureSettings
 {
     public Sprite shayaTex;
-
     public void ChangeTexture(bool open, Image im)
     {
         if (open)
@@ -233,7 +229,6 @@ public class ColorSettings
 {
     public Color color_close;
     public Color color_open;
-
     public void ChangeColor(bool open, Transform current_figure)
     {
         Image[] im = current_figure.GetComponentsInChildren<Image>();

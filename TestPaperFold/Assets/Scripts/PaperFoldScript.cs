@@ -3,10 +3,12 @@ using UnityEngine;
 [RequireComponent(typeof(FigureWork))]
 public class PaperFoldScript : MonoBehaviour
 {
-    FigureWork figureWork;
+    private FigureWork figureWork;
 
-    int _screenWidth;
-    int _screenHeight;
+    private int _screenWidth;
+    private int _screenHeight;
+
+    private int index_figure = -1;
     private void Start()
     {
         figureWork = GetComponent<FigureWork>();
@@ -27,6 +29,7 @@ public class PaperFoldScript : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             figureWork.ClickFigure(IndexFigure(Input.mousePosition));
+            index_figure = -1;
         }
 #elif UNITY_ANDROID || UNITY_IOS
         if (Input.touchCount == 1)
@@ -35,14 +38,13 @@ public class PaperFoldScript : MonoBehaviour
             if (touch.phase == TouchPhase.Ended)
             {
                 figureWork.ClickFigure(IndexFigure(touch.position));
+                index_figure = -1;
             }         
         }         
 #endif      
     }
     private int IndexFigure(Vector2 touchPos)
     {
-        int index_figure = -1;
-
         if (touchPos.x < _screenWidth / 1.4f)
         {
             index_figure = 0;
