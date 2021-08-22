@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 7370978}
   - component: {fileID: 7370977}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: obstacleField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -379,7 +379,7 @@ RectTransform:
   m_Children:
   - {fileID: 2120143475}
   m_Father: {fileID: 815358687}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -620,7 +620,7 @@ GameObject:
   - component: {fileID: 424150964}
   - component: {fileID: 424150963}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: obstacleField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -833,7 +833,7 @@ RectTransform:
   m_Children:
   - {fileID: 835779622}
   m_Father: {fileID: 815358687}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1183,6 +1183,7 @@ GameObject:
   - component: {fileID: 815358685}
   - component: {fileID: 815358684}
   - component: {fileID: 815358688}
+  - component: {fileID: 815358689}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1264,9 +1265,9 @@ RectTransform:
   m_Children:
   - {fileID: 1766361853}
   - {fileID: 188825074}
+  - {fileID: 989023177}
   - {fileID: 622634525}
   - {fileID: 162414571}
-  - {fileID: 989023177}
   - {fileID: 1048367487}
   - {fileID: 834661487}
   - {fileID: 659041308}
@@ -1290,7 +1291,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3083afa5479799f49aed69a541ab5aeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shayaTex: {fileID: 21300000, guid: 1379d47f10b93af47941a6f0b1d9f42a, type: 3}
+--- !u!114 &815358689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815358683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1627d250532062489741c5e64faff3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   figures:
   - FigureObj: {fileID: 989023177}
     FigureImage: {fileID: 1463343564}
@@ -1301,8 +1313,8 @@ MonoBehaviour:
   - FigureObj: {fileID: 622634525}
     FigureImage: {fileID: 1407457917}
     Neighbors:
-    - {fileID: 207346396}
     - {fileID: 1604389274}
+    - {fileID: 207346396}
     backgroundStorage: {fileID: 621363573}
   - FigureObj: {fileID: 162414571}
     FigureImage: {fileID: 158396568}
@@ -1313,17 +1325,19 @@ MonoBehaviour:
   - FigureObj: {fileID: 1048367487}
     FigureImage: {fileID: 768192639}
     Neighbors:
-    - {fileID: 268988774}
     - {fileID: 1604389274}
+    - {fileID: 268988774}
     backgroundStorage: {fileID: 1517970451}
-  _screenWidth: 0
-  _screenHeight: 0
-  _ochered: 
+  _textureSettings:
+    shayaTex: {fileID: 21300000, guid: 1379d47f10b93af47941a6f0b1d9f42a, type: 3}
+  _colorSettings:
+    color_close: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
+    color_open: {r: 0.3484916, g: 0.7169812, b: 0.29423285, a: 1}
+  winCheck:
+    WinObject: {fileID: 659041307}
+  _moveFigure:
+    speed: 15
   storage: {fileID: 834661487}
-  WinImage: {fileID: 659041307}
-  color_close: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 1}
-  color_open: {r: 0.101960786, g: 0.8392157, b: 0, a: 1}
-  speed: 15
 --- !u!1 &830792944
 GameObject:
   m_ObjectHideFlags: 0
@@ -1745,7 +1759,7 @@ RectTransform:
   m_Children:
   - {fileID: 1632596740}
   m_Father: {fileID: 815358687}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2361,7 +2375,7 @@ GameObject:
   - component: {fileID: 1703240734}
   - component: {fileID: 1703240733}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: obstacleField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2437,7 +2451,7 @@ GameObject:
   - component: {fileID: 1757535794}
   - component: {fileID: 1757535793}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: obstacleField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
